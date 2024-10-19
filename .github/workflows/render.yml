@@ -17,6 +17,32 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Check if pull request approved and merged before deploying
+        run: |
+          if [ ${{ github.event_name }} == 'pull_request' ]; then
+            if [ ${{ github.event.action }} == 'closed' ]; then
+              if [ ${{ github.event.pull_request.merged }} == 'true' ]; then
+                echo "Pull request approved and merged. Deploying to Render..."
+              else
+                echo "Pull request not merged. Skipping deployment."
+                exit 1
+              fi
+            else
+              echo "Pull request not closed. Skipping deployment."
+              exit 1
+            fi
+          fi
+      - name: Allow deployment only if tag created
+        run: |
+          if [ ${{ github.event_name }} == 'push' ]; then
+            if [ ${{ github.ref_type }} == 'tag' ]; then
+              echo "Tag created. Deploying to Render..."
+            else
+              echo "Tag not created. Skipping deployment."
+              exit 1
+            fi
+          fi
+
       - name: Deploy to Render
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
