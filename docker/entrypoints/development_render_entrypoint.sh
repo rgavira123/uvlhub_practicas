@@ -6,11 +6,6 @@ set -e
 # Install Rosemary
 pip install -e ./
 
-# Wait for the database to be ready by running a script
-sh ./scripts/wait-for-db.sh
-
-# Create a specific database for testing by running a script
-sh ./scripts/init-testing-db.sh
 
 # Initialize migrations only if the migrations directory doesn't exist
 if [ ! -d "migrations/versions" ]; then
@@ -53,8 +48,22 @@ else
     # Delete all data from the database
     rosemary db:reset -y
 
+    # si no hay datos que haya un echo que me diga, se ha borrado todo correctamente, si no hay datos que haya un echo que me diga, no se ha borrado correctamente
+
+    if [ $(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MARIADB_DATABASE';") -eq 0 ]; then
+        echo "All data has been deleted successfully."
+    else
+        echo "Data deletion was not successful."
+    fi
+
     # Seed the database with initial data
     rosemary db:seed -y
+
+    if [ $(mariadb -u $MARIADB_USER -p$MARIADB_PASSWORD -h $MARIADB_HOSTNAME -P $MARIADB_PORT -D $MARIADB_DATABASE -sse "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$MARIADB_DATABASE';") -gt 0 ]; then
+        echo "Database has been populated successfully."
+    else
+        echo "Database population was not successful."
+    fi
 
 
 fi
