@@ -1,4 +1,4 @@
-# Use an official Python runtime as a parent image
+# Use an official Python runtime as a parent image, Alpine version for a lighter footprint
 FROM python:3.12-slim
 
 # Install necessary packages
@@ -17,39 +17,42 @@ RUN apt-get clean \
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Copy application files
+# Copy files
 COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
 COPY rosemary/ ./rosemary
 COPY setup.py ./
 
-# Copy requirements.txt into the working directory
+# Copy requirements.txt into the working directory /app
 COPY requirements.txt .
 
 # Removes cache at the build stage
 RUN find . -type d -name "__pycache__" -exec rm -r {} + && \
     find . -type f -name "*.pyc" -exec rm -f {} +
 
-# Update pip
-RUN pip install --no-cache-dir --upgrade pip
-
-# Install application dependencies
-RUN pip install -r requirements.txt
-
-# Install rosemary as an editable package
-RUN pip install -e ./ && echo "Rosemary installed successfully"
-
-# Expose port 80
-EXPOSE 80
-
-# Copy and set entrypoint
+# Copy entrypoint and set execution permissions
 COPY docker/entrypoints/development_render_entrypoint.sh /app/development_render_entrypoint.sh
-RUN chmod +x /app/render_entrypoint.sh
+RUN chmod +x /app/development_render_entrypoint.sh
 
 # Copy the wait-for-db.sh script and set execution permissions
 COPY scripts/wait-for-db.sh /app/scripts/wait-for-db.sh
 RUN chmod +x /app/scripts/wait-for-db.sh
+
+# Create the .moduleignore file with the module 'webhook' inside
+RUN echo "webhook" > /app/.moduleignore
+
+# Update pip
+RUN pip install --no-cache-dir --upgrade pip
+
+# Install any needed packages specified in requirements.txt
+RUN pip install -r requirements.txt
+
+# Install rosemary
+RUN pip install -e ./
+
+# Expose port 80
+EXPOSE 80
 
 # Command to run the application
 CMD ["./development_render_entrypoint.sh"]
