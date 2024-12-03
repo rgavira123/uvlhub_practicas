@@ -44,7 +44,7 @@ RUN pip install -e ./ && echo "Rosemary installed successfully"
 EXPOSE 80
 
 # Copy and set entrypoint
-COPY docker/entrypoints/render_entrypoint.sh /app/render_entrypoint.sh
+COPY docker/entrypoints/development_render_entrypoint.sh /app/development_render_entrypoint.sh
 RUN chmod +x /app/render_entrypoint.sh
 
 # Copy the wait-for-db.sh script and set execution permissions
