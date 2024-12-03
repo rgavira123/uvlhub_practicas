@@ -21,9 +21,6 @@ pip install -e ./
 # Wait for the database to be ready by running a script
 sh ./scripts/wait-for-db.sh
 
-# Create a specific database for testing by running a script
-sh ./scripts/init-testing-db.sh
-
 # Initialize migrations only if the migrations directory doesn't exist
 if [ ! -d "migrations/versions" ]; then
     # Initialize the migration repository
