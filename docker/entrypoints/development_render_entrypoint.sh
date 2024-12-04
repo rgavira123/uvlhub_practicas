@@ -54,6 +54,9 @@ else
 
 fi
 
+# Run the Discord bot
+python3 ./app/modules/discord_bot/bot.py &
+
 # Start the application using Gunicorn, binding it to port 80
 # Set the logging level to info and the timeout to 3600 seconds
 exec gunicorn --bind 0.0.0.0:80 app:app --log-level info --timeout 3600
