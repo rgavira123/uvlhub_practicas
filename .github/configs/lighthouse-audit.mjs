@@ -1,48 +1,57 @@
 import fs from 'fs';
+import { mkdirSync, existsSync, writeFileSync } from 'fs';
 import { launch } from 'puppeteer';
 import lighthouse from 'lighthouse';
-import { writeFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
-import path from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Crear la carpeta 'reports' si no existe
+const reportsDir = './reports';
+if (!existsSync(reportsDir)) {
+  mkdirSync(reportsDir);
+}
 
 // Cargar configuración
 const configPath = process.argv[2];
+if (!fs.existsSync(configPath)) {
+  console.error(`No se encontró el archivo de configuración: ${configPath}`);
+  process.exit(1);
+}
 const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 (async () => {
   const browser = await launch({ headless: true });
   const page = await browser.newPage();
 
-  // Login
-  console.log('Iniciando sesión...');
-  await page.goto(config.login.url, { timeout: 60000 });
-  await page.type(config.login.usernameSelector, process.env.LOGIN_USERNAME);
-  await page.type(config.login.passwordSelector, process.env.LOGIN_PASSWORD);
-  await page.click(config.login.submitButtonSelector);
-  await page.waitForNavigation();
+  try {
+    // Login
+    console.log('Iniciando sesión...');
+    await page.goto(config.login.url, { timeout: 60000 });
+    await page.type(config.login.usernameSelector, process.env.LOGIN_USERNAME);
+    await page.type(config.login.passwordSelector, process.env.LOGIN_PASSWORD);
 
-  console.log('Login exitoso. Comenzando auditorías...');
+    console.log('Haciendo clic en el botón de login...');
+    await page.waitForSelector(config.login.submitButtonSelector, { visible: true, timeout: 60000 });
+    await page.click(config.login.submitButtonSelector);
+    await page.waitForNavigation();
 
-  // Analizar cada URL
-  for (const url of config.urls) {
-    console.log(`Analizando: ${url}`);
-    const report = await lighthouse(url, {
-      port: (new URL(browser.wsEndpoint())).port,
-      output: 'html',
-      onlyCategories: ['accessibility'],
-    });
+    console.log('Login exitoso. Comenzando auditorías...');
 
-    const fileName = `lighthouse-report-${url.replace(/[^a-z0-9]/gi, '_')}.html`;
-    await writeFile(fileName, report.report);
-    console.log(`Informe guardado: ${fileName}`);
+    // Analizar cada URL
+    for (const url of config.urls) {
+      console.log(`Analizando: ${url}`);
+      const report = await lighthouse(url, {
+        port: new URL(browser.wsEndpoint()).port,
+        output: 'html',
+        onlyCategories: ['accessibility'],
+      });
+
+      const fileName = `${reportsDir}/lighthouse-report-${url.replace(/[^a-z0-9]/gi, '_')}.html`;
+      writeFileSync(fileName, report.report);
+      console.log(`Reporte generado: ${fileName}`);
+    }
+  } catch (error) {
+    console.error('Error durante la auditoría:', error);
+  } finally {
+    await browser.close();
+    console.log('Todas las auditorías completadas.');
   }
-
-  await browser.close();
-  console.log('Todas las auditorías completadas.');
-})().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+})();
