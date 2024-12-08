@@ -18,7 +18,7 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
   // Login
   console.log('Iniciando sesión...');
-  await page.goto(config.login.url);
+  await page.goto(config.login.url, { timeout: 60000 });
   await page.type(config.login.usernameSelector, process.env.LOGIN_USERNAME);
   await page.type(config.login.passwordSelector, process.env.LOGIN_PASSWORD);
   await page.click(config.login.submitButtonSelector);
