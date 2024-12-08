@@ -3,7 +3,7 @@
       "url": "https://tortilla-hub-development.onrender.com/login",
       "usernameSelector": "input[name='email']",
       "passwordSelector": "input[name='password']",
-      "submitButtonSelector": "button[type='submit']"
+      "submitButtonSelector": "#submit"
     },
     "urls": [
       "https://tortilla-hub-development.onrender.com/explore",
