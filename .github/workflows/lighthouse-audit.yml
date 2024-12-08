@@ -40,6 +40,13 @@ jobs:
           LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
 
+      - name: Upload Cookies for Debugging
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: debug-cookies
+          path: cookies.json
+
       - name: Upload Lighthouse Reports
         uses: actions/upload-artifact@v3
         with:
