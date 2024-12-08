@@ -1,14 +1,19 @@
-const fs = require('fs');
-const lighthouse = require('lighthouse');
-const puppeteer = require('puppeteer');
-const { writeFileSync } = require('fs');
+import fs from 'fs';
+import { launch } from 'puppeteer';
+import lighthouse from 'lighthouse';
+import { writeFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Cargar configuración
 const configPath = process.argv[2];
-const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, configPath), 'utf-8'));
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await launch({ headless: true });
   const page = await browser.newPage();
 
   // Login
@@ -31,13 +36,13 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     });
 
     const fileName = `lighthouse-report-${url.replace(/[^a-z0-9]/gi, '_')}.html`;
-    writeFileSync(fileName, report.report);
+    await writeFile(fileName, report.report);
     console.log(`Informe guardado: ${fileName}`);
   }
 
   await browser.close();
   console.log('Todas las auditorías completadas.');
-})().catch(err => {
+})().catch((err) => {
   console.error(err);
   process.exit(1);
 });

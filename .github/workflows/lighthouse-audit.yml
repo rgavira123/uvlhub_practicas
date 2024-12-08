@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Lighthouse Audit
         run: |
-          node .github/configs/lighthouse-audit.js .github/configs/lighthouse-config.json
+          node .github/configs/lighthouse-audit.mjs .github/configs/lighthouse-config.json
         env:
           LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
