@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 // Cargar configuración
 const configPath = process.argv[2];
-const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, configPath), 'utf-8'));
+const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
 (async () => {
   const browser = await launch({ headless: true });
