@@ -39,3 +39,12 @@ jobs:
         env:
           LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
           LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+
+      - name: Upload Lighthouse Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-reports
+          path: reports/
+
+
+
