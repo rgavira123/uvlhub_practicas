@@ -1,11 +1,15 @@
 {
-    "login": {
-      "url": "https://tortilla-hub-development.onrender.com/login",
-      "usernameSelector": "input[name='email']",
-      "passwordSelector": "input[name='password']",
-      "submitButtonSelector": "#submit"
-    },
-    "urls": [
+  "login": {
+    "url": "https://tortilla-hub-development.onrender.com/login",
+    "usernameSelector": "input[name='email']",
+    "passwordSelector": "input[name='password']",
+    "submitButtonSelector": "#submit"
+  },
+  "logout": {
+    "url": "https://tortilla-hub-development.onrender.com/logout"
+  },
+  "urls": {
+    "private": [
       "https://tortilla-hub-development.onrender.com/explore",
       "https://tortilla-hub-development.onrender.com/team",
       "https://tortilla-hub-development.onrender.com/dataset/list",
@@ -13,10 +17,11 @@
       "https://tortilla-hub-development.onrender.com/doi/10.1234/dataset1/",
       "https://tortilla-hub-development.onrender.com/profile/edit",
       "https://tortilla-hub-development.onrender.com/dataset/upload",
-      "https://tortilla-hub-development.onrender.com/profile/summary",
+      "https://tortilla-hub-development.onrender.com/profile/summary"
+    ],
+    "public": [
       "https://tortilla-hub-development.onrender.com/signup/",
       "https://tortilla-hub-development.onrender.com/login"
-
     ]
   }
-  
+}

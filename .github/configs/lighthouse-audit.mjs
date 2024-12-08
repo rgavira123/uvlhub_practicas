@@ -35,21 +35,38 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
 
     console.log('Login completado.');
 
-    // Verificar cookies después del login
+    // Capturar cookies
     const cookies = await page.cookies();
     console.log('Cookies después del login:', cookies);
-
-    // Guardar cookies para depuración
-    fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
-    console.log('Cookies guardadas en cookies.json');
 
     // Configurar cookies para las siguientes URLs
     await page.setCookie(...cookies);
 
-    console.log('Comenzando auditorías con Lighthouse...');
+    console.log('Analizando rutas privadas...');
 
-    // Analizar cada URL
-    for (const url of config.urls) {
+    // Analizar URLs privadas
+    for (const url of config.urls.private) {
+      console.log(`Analizando: ${url}`);
+      const report = await lighthouse(url, {
+        port: new URL(browser.wsEndpoint()).port,
+        output: 'html',
+        onlyCategories: ['accessibility'],
+      });
+
+      const fileName = `${reportsDir}/lighthouse-report-${url.replace(/[^a-z0-9]/gi, '_')}.html`;
+      writeFileSync(fileName, report.report);
+      console.log(`Reporte generado: ${fileName}`);
+    }
+
+    // Logout
+    console.log('Navegando a la página de logout...');
+    await page.goto(config.logout.url, { timeout: 60000 });
+    console.log('Logout completado.');
+
+    console.log('Analizando rutas públicas...');
+
+    // Analizar URLs públicas
+    for (const url of config.urls.public) {
       console.log(`Analizando: ${url}`);
       const report = await lighthouse(url, {
         port: new URL(browser.wsEndpoint()).port,
