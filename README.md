@@ -9,7 +9,7 @@
   <img src="https://www.uvlhub.io/static/img/logos/logo-light.svg" alt="Logo">
 </div>
 
-# uvlhub.io
+# uvlhub.ios
 
 Repository of feature models in UVL format integrated with Zenodo and flamapy following Open Science principles - Developed by DiversoLab
 
