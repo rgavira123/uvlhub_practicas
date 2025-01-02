@@ -13,6 +13,6 @@
 
 Repository of feature models in UVL format integrated with Zenodo and flamapy following Open Science principles - Developed by DiversoLab
 
-## Official documentation
+## Official documentatione
 
 You can consult the official documentation of the project at [docs.uvlhub.io](https://docs.uvlhub.io/)
