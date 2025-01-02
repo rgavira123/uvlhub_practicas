@@ -11,7 +11,11 @@
 
 # uvlhub.iose
 
+<<<<<<< HEAD
 Repository of feature models in UVL format integrated with Zenodo and flamapy followinge Open Sciences principles - Developede by DiversoLab
+=======
+Repository of feature models in UVL format integrated with Zenodo and flamapy followinge Open Sciences principles - Developed by DiversoLab
+>>>>>>> 4dc68db (bcd)
 
 ## Official documentatione
 
